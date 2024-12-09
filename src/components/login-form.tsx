@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -10,8 +11,25 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Loader2Icon } from "lucide-react";
+import { useActionState } from "react";
+import { toast } from "sonner";
+interface ILoginFormProps {
+  loginAction: (formData: FormData) => Promise<void | { error: string }>;
+}
 
-export function LoginForm() {
+export function LoginForm({ loginAction }: ILoginFormProps) {
+  const [, dispatchAction, isPending] = useActionState(
+    async (_previousData: any, formData: FormData) => {
+      const response = await loginAction(formData);
+
+      if (response?.error) {
+        toast.error(response.error);
+      }
+    },
+    null
+  );
+
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
@@ -21,12 +39,13 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4">
+        <form action={dispatchAction} className="grid gap-4" noValidate>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
+              name="email"
               placeholder="m@example.com"
               required
             />
@@ -38,15 +57,16 @@ export function LoginForm() {
                 Forgot your password?
               </Link>
             </div>
-            <Input id="password" type="password" required />
+            <Input name="password" id="password" type="password" required />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" disabled={isPending} className="w-full">
+            {isPending && <Loader2Icon className="animate-spin mr-2 h-5 w-5" />}
             Login
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" type="button">
             Login with Google
           </Button>
-        </div>
+        </form>
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}
           <Link href="/register" className="underline">

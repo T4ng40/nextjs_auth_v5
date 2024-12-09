@@ -11,7 +11,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function RegisterForm() {
+interface IRegisterFormProps {
+  registerAction: (formData: FormData) => Promise<void>;
+}
+
+export function RegisterForm({ registerAction }: IRegisterFormProps) {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
@@ -21,10 +25,16 @@ export function RegisterForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4">
+        <form action={registerAction} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" type="name" placeholder="John Doe" required />
+            <Input
+              id="name"
+              type="name"
+              name="name"
+              placeholder="John Doe"
+              required
+            />
           </div>
 
           <div className="grid gap-2">
@@ -32,6 +42,7 @@ export function RegisterForm() {
             <Input
               id="email"
               type="email"
+              name="email"
               placeholder="m@example.com"
               required
             />
@@ -41,6 +52,7 @@ export function RegisterForm() {
             <Input
               id="password"
               type="password"
+              name="password"
               placeholder="********"
               required
             />
@@ -48,7 +60,7 @@ export function RegisterForm() {
           <Button type="submit" className="w-full">
             Create account
           </Button>
-        </div>
+        </form>
         <div className="mt-4 text-center text-sm">
           Already have an account?{" "}
           <Link href="/login" className="underline">
