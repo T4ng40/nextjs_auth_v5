@@ -1,17 +1,16 @@
 import { loginSchema } from "@/schemas/loginSchema";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import { z } from "zod";
 import { db } from "./db";
 
-const schema = z.object({
-  email: z.string().min(1).email(),
-  password: z.string().min(8),
-});
-
 export const { auth, signIn, signOut, handlers } = NextAuth({
+  pages: {
+    error: "/login",
+  },
+  adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
   },
@@ -32,7 +31,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           },
         });
 
-        if (!user) {
+        if (!user || !user.password) {
           return null;
         }
 
