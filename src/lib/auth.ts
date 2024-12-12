@@ -2,6 +2,7 @@ import { loginSchema } from "@/schemas/loginSchema";
 import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import { z } from "zod";
 import { db } from "./db";
 
@@ -15,6 +16,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     strategy: "jwt",
   },
   providers: [
+    Google,
     Credentials({
       authorize: async (credentials) => {
         const { success, data } = loginSchema.safeParse(credentials);

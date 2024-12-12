@@ -34,9 +34,18 @@ export default function Page() {
       throw error;
     }
   }
+
+  async function googleLoginAction() {
+    "use server";
+
+    await signIn("google");
+  }
   return (
     <div className="flex h-screen w-full items-center justify-center px-4">
-      <LoginForm loginAction={loginAction} />
+      <LoginForm
+        loginAction={loginAction}
+        googleLoginAction={googleLoginAction}
+      />
     </div>
   );
 }

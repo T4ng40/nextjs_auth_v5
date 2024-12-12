@@ -16,9 +16,10 @@ import { useActionState } from "react";
 import { toast } from "sonner";
 interface ILoginFormProps {
   loginAction: (formData: FormData) => Promise<void | { error: string }>;
+  googleLoginAction: () => Promise<void>;
 }
 
-export function LoginForm({ loginAction }: ILoginFormProps) {
+export function LoginForm({ loginAction, googleLoginAction }: ILoginFormProps) {
   const [, dispatchAction, isPending] = useActionState(
     async (_previousData: any, formData: FormData) => {
       const response = await loginAction(formData);
@@ -57,13 +58,25 @@ export function LoginForm({ loginAction }: ILoginFormProps) {
                 Forgot your password?
               </Link>
             </div>
-            <Input name="password" id="password" type="password" required />
+            <Input
+              name="password"
+              id="password"
+              placeholder="********"
+              autoComplete="current-password"
+              type="password"
+              required
+            />
           </div>
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending && <Loader2Icon className="animate-spin mr-2 h-5 w-5" />}
             Login
           </Button>
-          <Button variant="outline" className="w-full" type="button">
+          <Button
+            variant="outline"
+            className="w-full"
+            type="button"
+            onClick={googleLoginAction}
+          >
             Login with Google
           </Button>
         </form>
