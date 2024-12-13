@@ -11,15 +11,16 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { Loader2Icon } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { useActionState } from "react";
 import { toast } from "sonner";
 interface ILoginFormProps {
   loginAction: (formData: FormData) => Promise<void | { error: string }>;
-  googleLoginAction: () => Promise<void>;
 }
 
-export function LoginForm({ loginAction, googleLoginAction }: ILoginFormProps) {
+export function LoginForm({ loginAction }: ILoginFormProps) {
   const [, dispatchAction, isPending] = useActionState(
     async (_previousData: any, formData: FormData) => {
       const response = await loginAction(formData);
@@ -75,7 +76,7 @@ export function LoginForm({ loginAction, googleLoginAction }: ILoginFormProps) {
             variant="outline"
             className="w-full"
             type="button"
-            onClick={googleLoginAction}
+            onClick={() => signIn("google")}
           >
             Login with Google
           </Button>

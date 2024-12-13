@@ -9,13 +9,16 @@ import { db } from "./db";
 export const { auth, signIn, signOut, handlers } = NextAuth({
   pages: {
     error: "/login",
+    signIn: "/login",
   },
   adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
   },
   providers: [
-    Google,
+    Google({
+      allowDangerousEmailAccountLinking: true,
+    }),
     Credentials({
       authorize: async (credentials) => {
         const { success, data } = loginSchema.safeParse(credentials);
