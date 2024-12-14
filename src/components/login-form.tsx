@@ -12,18 +12,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { Loader2Icon } from "lucide-react";
+import { loginAction, magicLinkAction } from "@/app/login/actions";
+import { ChevronLeftIcon, Loader2Icon, Wand2Icon } from "lucide-react";
 import { signIn } from "next-auth/react";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { toast } from "sonner";
-interface ILoginFormProps {
-  loginAction: (formData: FormData) => Promise<void | { error: string }>;
-}
 
-export function LoginForm({ loginAction }: ILoginFormProps) {
+export function LoginForm() {
+  const [isMagicLink, setIsMagicLink] = useState(false);
   const [, dispatchAction, isPending] = useActionState(
     async (_previousData: any, formData: FormData) => {
-      const response = await loginAction(formData);
+      const action = isMagicLink ? magicLinkAction : loginAction;
+      const response = await action(formData);
 
       if (response?.error) {
         toast.error(response.error);
@@ -52,33 +52,51 @@ export function LoginForm({ loginAction }: ILoginFormProps) {
               required
             />
           </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <Link href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </Link>
+          {!isMagicLink && (
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  href="#"
+                  className="ml-auto inline-block text-sm underline"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+              <Input
+                name="password"
+                id="password"
+                placeholder="********"
+                autoComplete="current-password"
+                type="password"
+                required
+              />
             </div>
-            <Input
-              name="password"
-              id="password"
-              placeholder="********"
-              autoComplete="current-password"
-              type="password"
-              required
-            />
-          </div>
+          )}
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending && <Loader2Icon className="animate-spin mr-2 h-5 w-5" />}
-            Login
+            {isMagicLink ? "Send Magic Link" : "Login"}
           </Button>
+          {!isMagicLink && (
+            <Button
+              variant="outline"
+              className="w-full"
+              disabled={isPending}
+              type="button"
+              onClick={() => signIn("google")}
+            >
+              Login with Google
+            </Button>
+          )}
           <Button
             variant="outline"
             className="w-full"
+            disabled={isPending}
             type="button"
-            onClick={() => signIn("google")}
+            onClick={() => setIsMagicLink((prev) => !prev)}
           >
-            Login with Google
+            {isMagicLink ? <ChevronLeftIcon /> : <Wand2Icon />}
+            {isMagicLink ? "Back" : "Login with Magic Link"}
           </Button>
         </form>
         <div className="mt-4 text-center text-sm">
