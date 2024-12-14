@@ -1,7 +1,7 @@
 "use server";
 
 import { signIn } from "@/lib/auth";
-import { loginSchema } from "@/schemas/loginSchema";
+import { loginSchema } from "@/schemas/authSchema";
 import { magicLinkSchema } from "@/schemas/magicLinkSchema";
 import { AuthError, CredentialsSignin } from "next-auth";
 

@@ -1,19 +1,13 @@
 import { RegisterForm } from "@/components/register-form";
 import { signIn } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { registerSchema } from "@/schemas/authSchema";
 import { hash } from "bcryptjs";
-import { z } from "zod";
-
-const schema = z.object({
-  name: z.string().min(2),
-  email: z.string().min(1).email(),
-  password: z.string().min(8),
-});
 
 export default function Page() {
   async function registerAction(formData: FormData) {
     "use server";
-    const { success, data } = schema.safeParse(Object.fromEntries(formData));
+    const { success, data } = registerSchema.safeParse(Object.fromEntries(formData));
 
     if (!success) {
       return;
