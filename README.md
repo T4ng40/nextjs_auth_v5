@@ -1,38 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Authentication with Auth.js
+
+This project demonstrates authentication in a Next.js application using Auth.js and Prisma.
+
+## Features
+
+- **Next.js**: A powerful React framework for building server-side rendered applications.
+- **TypeScript**: Ensures type safety throughout the application.
+- **Prisma**: Provides a robust ORM for database management.
+- **Next-Auth**: Simplifies the implementation of authentication in Next.js applications.
+- **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
+- **Radix UI**: Unstyled, accessible components for building high-quality user interfaces.
+- **BcryptJS**: Used for securely hashing passwords.
 
 ## Getting Started
 
-First, run the development server:
+First, clone the repository:
+
+```bash
+git clone https://github.com/T4ng40/nextjs_auth_v5.git
+cd nextjs_auth_v5
+```
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Highlights
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Authentication**: Implemented using Next-Auth with Prisma adapter for secure and efficient user management.
+- **Theming**: Supports dark mode and theme switching using `next-themes`.
+- **UI Components**: Utilizes Radix UI for accessible and high-quality UI components.
+- **Form Handling**: Built-in form validation and handling using `zod`.
 
-## Learn More
+## Pages and Functionalities
 
-To learn more about Next.js, take a look at the following resources:
+### Login Page (`src/app/login/page.tsx`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Path**: `/login`
+- **Component**: Displays a login form using the `LoginForm` component.
+- **Functionality**: Handles user login actions.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Dashboard Page (`src/app/dash/page.tsx`)
 
-## Deploy on Vercel
+- **Path**: `/dash`
+- **Component**: Displays user role and session information.
+- **Functionality**: Fetches and displays the current user session using the `auth` function
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Root Layout (`src/app/layout.tsx`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Path**: Applied globally as the root layout.
+- **Component**: Wraps the application with theme and session providers.
+- **Functionality**: Provides theme support, session management, and notifications.
 
-# nextjs_auth_v5
+### Register Page (`src/app/register/page.tsx`)
+
+- **Path**: `/register`
+- **Component**: Displays a registration form using the `RegisterForm` component.
+- **Functionality**: Handles user registration, hashing passwords with `bcryptjs`, and saving user data to the database.
+
+### API Routes
+
+- **Authentication Route (`src/app/api/auth/[...nextauth]/route.ts`)**: Defines GET and POST handlers for authentication using `next-auth`.
+
+### Schemas
+
+- **Login Schema (`src/schemas/loginSchema.ts`)**: Validates login form data.
+- **Magic Link Schema (`src/schemas/magicLinkSchema.ts`)**: Validates magic link form data.
