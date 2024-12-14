@@ -1,4 +1,5 @@
 import { RegisterForm } from "@/components/register-form";
+import { signIn } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { hash } from "bcryptjs";
 import { z } from "zod";
@@ -27,6 +28,12 @@ export default function Page() {
         name,
         password: hashedPassword,
       },
+    });
+
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: "/dash",
     });
   }
 
