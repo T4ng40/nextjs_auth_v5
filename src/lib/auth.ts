@@ -1,27 +1,16 @@
-import { loginSchema } from "@/schemas/loginSchema";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
-import { Resend } from "resend";
+
+import { authConfig } from "./auth.config";
 import { db } from "./db";
 
+import { Resend } from "resend";
+
 const resend = new Resend(process.env.AUTH_RESEND_KEY);
+
 export const { auth, signIn, signOut, handlers } = NextAuth({
-  pages: {
-    error: "/login",
-    signIn: "/login",
-    verifyRequest: "/login?magic-link=true",
-  },
-  adapter: PrismaAdapter(db),
-  session: {
-    strategy: "jwt",
-  },
   providers: [
-    // Resend({
-    //   from: "Acme <onboarding@resend.dev>",
-    // }),
+    ...authConfig.providers,
     {
       id: "magic-link",
       type: "email",
@@ -38,50 +27,32 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
       },
       maxAge: 24 * 60 * 60,
     },
-    Google({
-      allowDangerousEmailAccountLinking: true,
-    }),
-    Credentials({
-      authorize: async (credentials) => {
-        const { success, data } = loginSchema.safeParse(credentials);
-
-        if (!success) {
-          return null;
-        }
-        const { email, password } = data;
-
-        const user = await db.user.findUnique({
-          where: {
-            email,
-          },
-        });
-
-        if (!user || !user.password) {
-          return null;
-        }
-
-        const isPasswordValid = await compare(password, user.password);
-
-        if (!isPasswordValid) {
-          return null;
-        }
-
-        return {
-          email: user.email,
-          id: user.id,
-          name: user.name,
-        };
-      },
-    }),
   ],
+  pages: {
+    error: "/login",
+    signIn: "/login",
+    verifyRequest: "/login?magic-link=true",
+  },
+  adapter: PrismaAdapter(db),
+  session: {
+    strategy: "jwt",
+  },
+
   events: {},
   callbacks: {
-    jwt({ token }) {
+    jwt({ token, user }) {
+      if (user?.role) {
+        token.role = user.role;
+      }
       return token;
     },
     session({ session, token }) {
       if (token.sub) {
         session.user.id = token.sub;
+      }
+
+      if (token.role) {
+        session.user.role = token.role;
       }
       return session;
     },
