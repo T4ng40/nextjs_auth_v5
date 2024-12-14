@@ -1,4 +1,4 @@
-import { loginSchema } from "@/schemas/loginSchema";
+import { loginSchema } from "@/schemas/authSchema";
 import { compare } from "bcryptjs";
 import { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
